@@ -1,0 +1,15 @@
+{% extends 'mybase.html' %}
+{% block head %}
+
+{% endblock %}
+{% block pagetitle %}
+
+{% endblock %}
+
+
+{% block body %}
+<div class = 'button'><a class = fill href = '{% url 'dispenser:submit' %}'>Submit</a></div>
+<div class = 'button'><a class = fill href = '{% url 'dispenser:retrieve' %}'>Retrieve</a></div>
+<div style = 'clear:both'></div>
+{% endblock %}
+

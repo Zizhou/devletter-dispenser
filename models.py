@@ -1,5 +1,6 @@
 from django.db import models
 from django.db.models.signals import post_save
+from django import forms
 
 from submit.models import Game
 # Create your models here.
@@ -22,6 +23,22 @@ class Code(models.Model):
 
     def __unicode__(self):
         return unicode(self.game.game) + self.code
+
+    class Meta:
+        permissions = (
+            ('can_access', 'Can access codes'),
+        )
+
+class CodeForm(forms.Form):
+    gameselect = forms.ModelChoiceField(queryset = GameCodeProfile.objects.all().order_by('game__name'), label = 'Select a game to add codes to:')
+    codeblock = forms.CharField(widget = forms.Textarea, label = 'Enter code(s):')
+    #js will pull out current notes, if any
+    notes = forms.CharField(widget = forms.Textarea,  label = 'Notes regarding codes:')#, attrs={'id':'code_notes',}
+    def code_split(textblock):
+        codes = []
+        for code in textblock.splitlines():
+            codes.append(code)
+        return codes
 
 #magic signals
 

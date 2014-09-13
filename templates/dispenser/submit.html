@@ -1,0 +1,30 @@
+{% extends 'mybase.html' %}
+{% block head %}
+<style>
+div.box { background-color:#F7C6EA;float:left;margin:5px;padding:5px; }
+</style>
+
+<script>
+<!--updating notes script goes here -->
+</script>
+{% endblock %}
+{% block pagetitle %}
+
+{% endblock %}
+
+
+{% block body %}
+<form action = '{% url 'dispenser:submit' %}' method = 'POST' name = submitform>
+{% csrf_token %}
+<div class = 'box'>
+{{form.gameselect.label}}<br>
+{{form.gameselect}}<br>
+{{form.codeblock.label}}<br>
+{{form.codeblock}}<br>
+{{form.notes.label}}<br>
+{{form.notes}}<br>
+</div>
+<div style = 'clear:both'></div>
+<input type = 'submit' value = 'Submit Codes'>
+</form>
+{% endblock %}

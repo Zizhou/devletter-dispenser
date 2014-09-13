@@ -4,4 +4,7 @@ from dispenser import views
 
 urlpatterns = patterns('',
     url(r'^$', views.main_page, name = 'main'),
+    url(r'submit/', views.submit, name = 'submit'),
+    url(r'retrieve/', views.retrieve, name = 'retrieve'),
+    url(r'^api/get_notes/(?P<game_id>\d+)/$', views.get_notes, name = 'get_notes'),
 )
