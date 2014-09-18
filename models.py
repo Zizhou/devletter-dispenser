@@ -33,15 +33,26 @@ class CodeForm(forms.Form):
     gameselect = forms.ModelChoiceField(queryset = GameCodeProfile.objects.all().order_by('game__name'), label = 'Select a game to add codes to:')
     codeblock = forms.CharField(widget = forms.Textarea, label = 'Enter code(s):')
     #js will pull out current notes, if any
-    notes = forms.CharField(widget = forms.Textarea,  label = 'Notes regarding codes:')#, attrs={'id':'code_notes',}
-    def code_split(textblock):
-        codes = []
-        for code in textblock.splitlines():
-            codes.append(code)
-        return codes
+    notes = forms.CharField(required = False, widget = forms.Textarea,  label = 'Notes regarding codes:')#, attrs={'id':'code_notes',}
 
+    def code_split(self):
+        code_list = []
+        for code in self.cleaned_data['codeblock'].splitlines():
+            print code
+            if code != '':
+                code_list.append(code)
+        return code_list
+
+    def code_save(self):
+        game = self.cleaned_data['gameselect']
+        game.notes = self.cleaned_data['notes']
+        game.save()
+        for code in self.code_split():
+            c = Code(game = game, code = code)
+            c.save() 
 #magic signals
 
+#create code profiles when a new game is created
 def game_create(sender, instance, created, **kwargs):
     if created == True:
         g = GameCodeProfile(game = instance)
