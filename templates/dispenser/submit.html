@@ -5,7 +5,16 @@ div.box { background-color:#F7C6EA;float:left;margin:5px;padding:5px; }
 </style>
 
 <script>
-<!--updating notes script goes here -->
+//get current notes
+$(document).ready(function(){
+    $( '#id_gameselect' ).change(function(){
+        $.get( '/dispenser/api/get_notes/' + this.value, function(data){
+            $('#id_notes').val(data);
+        });
+    });
+});
+
+
 </script>
 {% endblock %}
 {% block pagetitle %}
