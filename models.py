@@ -12,6 +12,19 @@ class GameCodeProfile(models.Model):
 
     def __unicode__(self):
         return unicode(self.game) + " (" + unicode(self.count) + ")"
+    
+    def update_count(self):
+        self.count = self.code_set.exclude(used = True).count() 
+        self.save()
+
+    def get_code(self):
+        new_code = Code.objects.filter(game = self.id).exclude(used = True)
+        if new_code.count() == 0:
+            return False
+        else:
+            return new_code[0]
+
+
 
 class Code(models.Model):
     game = models.ForeignKey(GameCodeProfile)
@@ -22,19 +35,19 @@ class Code(models.Model):
     assigned = models.CharField(max_length = 200, blank = True)
 
     def __unicode__(self):
-        return unicode(self.game.game) + self.code
+        return unicode(self.game.game) + self.code + unicode(self.assigned)
 
     class Meta:
         permissions = (
             ('can_access', 'Can access codes'),
         )
-
+    
 class CodeForm(forms.Form):
     gameselect = forms.ModelChoiceField(queryset = GameCodeProfile.objects.all().order_by('game__name'), label = 'Select a game to add codes to:')
     codeblock = forms.CharField(widget = forms.Textarea, label = 'Enter code(s):')
     #js will pull out current notes, if any
     notes = forms.CharField(required = False, widget = forms.Textarea,  label = 'Notes regarding codes:')#, attrs={'id':'code_notes',}
-
+    #splits block of codes by newline
     def code_split(self):
         code_list = []
         for code in self.cleaned_data['codeblock'].splitlines():
@@ -43,6 +56,7 @@ class CodeForm(forms.Form):
                 code_list.append(code)
         return code_list
 
+    #processes codeblock into individual codes
     def code_save(self):
         game = self.cleaned_data['gameselect']
         game.notes = self.cleaned_data['notes']
@@ -50,6 +64,16 @@ class CodeForm(forms.Form):
         for code in self.code_split():
             c = Code(game = game, code = code)
             c.save() 
+
+class GameSelectForm(forms.Form):
+    gameselect = forms.ModelChoiceField(queryset = GameCodeProfile.objects.exclude(count = 0).order_by('game__name'), label = 'Select a game to get codes from:')
+
+class GetCodeForm(forms.Form):
+    code = forms.CharField(max_length = 200, label = 'Code:', widget = forms.TextInput(attrs={'readonly':'readonly'}))
+    assigned = forms.CharField(max_length = 500, label = 'This code is going to:')
+    used = forms.BooleanField(label = 'Check box to confirm assignment:')
+
+
 #magic signals
 
 #create code profiles when a new game is created
