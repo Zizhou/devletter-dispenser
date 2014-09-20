@@ -7,8 +7,9 @@ from dispenser.models import GameCodeProfile, Code, CodeForm, GameSelectForm, Ge
 
 @permission_required('dispenser.can_access')
 def main_page(request):
+    youtube = 'yHMRRmpI2xo'
     context = {
-
+        'youtube': youtube,
     }
     return render(request, 'dispenser/main.html', context)
 
