@@ -5,7 +5,7 @@ from django.contrib.auth.decorators import login_required, permission_required
 from dispenser.models import GameCodeProfile, Code, CodeForm, GameSelectForm, GetCodeForm
 # Create your views here.
 
-@permission_required('dispenser.can_access')
+#@permission_required('dispenser.can_access')
 def main_page(request):
     youtube = 'yHMRRmpI2xo'
     context = {
