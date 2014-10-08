@@ -62,8 +62,11 @@ class CodeForm(forms.Form):
         game.notes = self.cleaned_data['notes']
         game.save()
         for code in self.code_split():
-            c = Code(game = game, code = code)
-            c.save() 
+            try:
+                c = Code(game = game, code = code)
+                c.save()
+            except:
+                continue
 
 class GameSelectForm(forms.Form):
     gameselect = forms.ModelChoiceField(queryset = GameCodeProfile.objects.exclude(count = 0).order_by('game__name'), label = 'Select a game to get codes from:')
