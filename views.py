@@ -7,7 +7,7 @@ from dispenser.models import GameCodeProfile, Code, CodeForm, GameSelectForm, Ge
 
 #@permission_required('dispenser.can_access')
 def main_page(request):
-    youtube = 'yHMRRmpI2xo'
+    youtube = 'dmVWvOC_2HU'
     context = {
         'youtube': youtube,
     }
@@ -88,6 +88,7 @@ def retrieve_code(request, game_id):
         else:
             return HttpResponse('what')
     context = {
+        'game_note' : GameCodeProfile.objects.get(id = game_id).notes,
         'game_name' : game_name,
         'get_code' : get_code,
         'game_id' : game_id,
