@@ -18,6 +18,10 @@ $(document).ready(function(){
 </script>
 {% endblock %}
 {% block pagetitle %}
+The following codes were invalid:<br>
+{% for item in invalid %}
+{{item}}<br>
+{%endfor%}
 {{message}}
 {% endblock %}
 

@@ -23,7 +23,10 @@ class GameCodeProfile(models.Model):
             return False
         else:
             return new_code[0]
-
+    def get_all_codes(self):
+        all_code = Code.objects.filter(game = self.id)
+        return all_code
+         
 
 
 class Code(models.Model):
@@ -61,12 +64,15 @@ class CodeForm(forms.Form):
         game = self.cleaned_data['gameselect']
         game.notes = self.cleaned_data['notes']
         game.save()
+        invalid = []
         for code in self.code_split():
             try:
                 c = Code(game = game, code = code)
                 c.save()
             except:
+                invalid.append(code)
                 continue
+        return invalid
 
 class GameSelectForm(forms.Form):
     gameselect = forms.ModelChoiceField(queryset = GameCodeProfile.objects.exclude(count = 0).order_by('game__name'), label = 'Select a game to get codes from:')
@@ -76,6 +82,13 @@ class GetCodeForm(forms.Form):
     assigned = forms.CharField(max_length = 500, label = 'This code is going to:')
     used = forms.BooleanField(label = 'Check box to confirm assignment:')
 
+class GetWinnerForm(forms.Form):
+    winner = forms.CharField(max_length = 500, label = 'Search for code recepient:')
+    
+    def get_winner(self):
+        person = self.cleaned_data['winner']
+        entry = Code.objects.filter(assigned__iexact = person)
+        return entry
 
 #magic signals
 

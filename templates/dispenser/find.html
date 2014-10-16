@@ -12,13 +12,20 @@ div.box { background-color:#F7C6EA;float:left;margin:5px;padding:5px; }
 
 
 {% block body %}
-<form action = '{{form}}' method = 'POST' name = 'form' >
+<form action = '{% url 'dispenser:find' %}' method = 'POST' name = 'form' >
 {% csrf_token %}
 <div class = 'box'>
-{{game_select}}
+{{form}}
 
-<input type = 'submit' value = 'Get Code!'>
+<input type = 'submit' value = 'Get Person!'>
 </div>
 </form>
 <div style = 'clear:both'></div>
+<div class = 'box'>
+{%for entry in result%}
+{{entry.game.game}} <b>{{entry.game.notes}}</b>- {{entry.code}}<br>
+{% endfor %}
+</div>
+<div style = 'clear:both'></div>
+
 {% endblock %}
