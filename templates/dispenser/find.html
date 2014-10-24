@@ -23,6 +23,9 @@ div.box { background-color:#F7C6EA;float:left;margin:5px;padding:5px; }
 <div style = 'clear:both'></div>
 <div class = 'box'>
 {%for entry in result%}
+{%if entry.codepocalypse %}
+codepocalypse!
+{% endif %}
 {{entry.game.game}} <b>{{entry.game.notes}}</b>- {{entry.code}}<br>
 {% endfor %}
 </div>

@@ -11,5 +11,6 @@ urlpatterns = patterns('',
     url(r'batch/$', views.batch, name = 'batch'),
     url(r'^batch/get/(?P<game_id>\d+)/$', views.batch_code, name = 'batch_code'),
     url(r'find/$', views.find, name = 'find'),
+    url(r'codepocalypse/$', views.rand, name = 'codepocalypse'),
 
 )

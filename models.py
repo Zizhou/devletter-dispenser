@@ -33,6 +33,7 @@ class Code(models.Model):
     game = models.ForeignKey(GameCodeProfile)
     code = models.CharField(max_length = 200, unique = True)
     used = models.BooleanField(default = False)
+    codepocalypse = models.BooleanField(default = False, blank = True)
     #could also be FK, but I think that's overkill
     #can always just make a query for a batch
     assigned = models.CharField(max_length = 200, blank = True)
@@ -80,7 +81,10 @@ class GameSelectForm(forms.Form):
 class GetCodeForm(forms.Form):
     code = forms.CharField(max_length = 200, label = 'Code:', widget = forms.TextInput(attrs={'readonly':'readonly'}))
     assigned = forms.CharField(max_length = 500, label = 'This code is going to:')
-    used = forms.BooleanField(label = 'Check box to confirm assignment:')
+
+#    used = forms.BooleanField(label = 'Check box to confirm assignment:')
+    used = forms.BooleanField(widget = forms.HiddenInput())
+    codepocalypse = forms.BooleanField(widget = forms.HiddenInput())
 
 class GetWinnerForm(forms.Form):
     winner = forms.CharField(max_length = 500, label = 'Search for code recepient:')

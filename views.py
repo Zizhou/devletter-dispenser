@@ -66,14 +66,16 @@ def retrieve_code(request, game_id):
     game_name = game_profile
     code = game_profile.get_code()
     if not code:
+        game_profile.update_count()
         return HttpResponse('No more codes for this game!')
-    get_code = GetCodeForm(initial = {'code':code.code})
+    get_code = GetCodeForm(initial = {'code':code.code,'used':True,'codepocalypse':False})
     if request.method == 'POST':
         if 'form_cancel' in request.POST:
             print 'form cancel'
             return redirect('/dispenser/retrieve')
         processing_code = GetCodeForm(request.POST)
         if not processing_code.is_valid():
+            print request.POST 
             return HttpResponse('You forgot to give this code to someone.')
         print processing_code.cleaned_data
         
@@ -123,6 +125,7 @@ def batch_code(request, game_id):
     game_name = game_profile
     code = game_profile.get_all_codes()
     if not code:
+        game_profile.update_count()
         return HttpResponse('No codes for this game!')
     get_code = []
     for entry in code:
@@ -157,6 +160,7 @@ def batch_code(request, game_id):
     }
     return render(request, 'dispenser/batch.html', context)
 
+@permission_required('dispenser.can_access')
 def find(request):
     if request.method == 'POST':
         get_form = GetWinnerForm(request.POST)
@@ -177,9 +181,55 @@ def find(request):
         }
     return render(request, 'dispenser/find.html',context)
 
-def _process_code(assigned, code, used):
+@permission_required('dispenser.can_access')
+def rand(request):
+    try:
+        game_profile = GameCodeProfile.objects.exclude(count = 0).order_by('?')[0]
+    except:
+        return HttpResponse('something went wrong')
+
+    game_id = game_profile.id
+    game_name = game_profile
+    code = game_profile.get_code()
+    if not code:
+        return HttpResponse('no more codes')
+    get_code = GetCodeForm(initial = {'code':code.code, 'used':True,'codepocalypse':True})
+    if request.method == 'POST':
+        print request.POST
+        if 'form_cancel' in request.POST:
+            print 'form cancel'
+            return redirect('/dispenser/codepocalypse/')
+        processing_code = GetCodeForm(request.POST)
+        if not processing_code.is_valid():
+            return HttpResponse('You forgot to give this code to someone.')
+        print processing_code.cleaned_data
+        
+        if 'form_commit' in request.POST:
+            print 'form commit'
+            _process_code(**processing_code.cleaned_data)
+            game_profile.update_count()
+            return redirect('/dispenser/codepocalypse/')
+        elif 'form_again' in request.POST:
+            print 'form again'   
+            _process_code(**processing_code.cleaned_data)
+            game_profile.update_count()
+            url =  '/dispenser/codepocalypse/'
+            return redirect(url)
+        else:
+            return HttpResponse('what')
+    context = {
+        'game_note' : GameCodeProfile.objects.get(id = game_id).notes,
+        'game_name' : game_name,
+        'get_code' : get_code,
+        'game_id' : game_id,
+    }
+    return render(request, 'dispenser/codepocalypse.html', context)
+
+
+def _process_code(assigned, code, used, codepocalypse):
     code = Code.objects.get(code = code)
     code.assigned = assigned
+    code.codepocalypse = codepocalypse
     code.used = used
     code.save()
 
