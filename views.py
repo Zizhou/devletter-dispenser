@@ -9,7 +9,7 @@ import random, mailbot
 from auto_code import AutoCode
 
 #TODO
-DONATION_GIVEAWAY_ID = 49
+DONATION_GIVEAWAY_ID = 462 
 
 # Create your views here.
 

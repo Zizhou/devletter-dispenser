@@ -18,7 +18,7 @@ def pack_donation(donation, send_to, game, url_get, url_return):
     mail['Subject'] = 'Thank you for "donating"'
     mail['From'] = settings.ROBOT_MAILER 
     mail['To'] = send_to
-    message = donation + '\n\r' + 'Here is a code for ' + str(game) +'.\n\r''To redeem it, go to '+url_get+'\n\r If you would like to return it to us, go to '+url_return
+    message = donation + '.<br>' + 'Here is a code for ' + str(game) +'.<br>''To redeem it, go to '+url_get+'<br> If you would like to return it to us, go to '+url_return
     body = MIMEText(message, 'html', 'UTF-8')
     mail.attach(body)
 

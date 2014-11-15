@@ -1,6 +1,6 @@
 from dispenser.models import Code, GameCodeProfile
 
-GLOBAL_URL = 'http://localhost:8000/dispenser/auto/'
+GLOBAL_URL = 'http://devletter.net/dispenser/auto/'
 
 class AutoCode():
     def __init__(self):
