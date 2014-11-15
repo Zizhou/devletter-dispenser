@@ -290,6 +290,7 @@ def auto_return(request):
  
         if 'return_code' in request.POST:
             code.uuid_reset()
+            code.game.update_count()
             return HttpResponse('returned')
         elif 'keep_code' in request.POST:
             return HttpResponse('kept') 
