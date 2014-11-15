@@ -3,6 +3,8 @@ from django.db.models.signals import post_save
 from django import forms
 
 from submit.models import Game
+
+import uuid
 # Create your models here.
 
 class GameCodeProfile(models.Model):
@@ -38,13 +40,37 @@ class Code(models.Model):
     #can always just make a query for a batch
     assigned = models.CharField(max_length = 200, blank = True)
 
+    uuid = models.CharField(max_length = 200, unique = True, blank = True, null = True)
+    uuid_assigned = models.BooleanField(default = False, blank = True)
+    uuid_claimed = models.BooleanField(default = False, blank = True)
+
     def __unicode__(self):
         return unicode(self.game.game) + self.code + unicode(self.assigned)
+
+    def uuid_assign(self, recipient):
+        if self.uuid_claimed or self.uuid_assigned:
+            return False
+        self.used = True
+        self.assigned = recipient
+        self.uuid_assigned = True
+        self.save()
+        return True
+
+    def uuid_reset(self):
+        if self.uuid_claimed:
+            return False
+        self.uuid_assigned = False
+        self.assigned = ''
+        self.used = False
+        create_uuid(self)
+        self.save()
+        return True
 
     class Meta:
         permissions = (
             ('can_access', 'Can access codes'),
         )
+
     
 class CodeForm(forms.Form):
     gameselect = forms.ModelChoiceField(queryset = GameCodeProfile.objects.all().order_by('game__name'), label = 'Select a game to add codes to:')
@@ -112,3 +138,13 @@ def count_increment(sender, instance, created, **kwargs):
         gcp.save()
 
 post_save.connect(count_increment, sender = Code)
+#creates new uuid for each new code
+def code_uuid(sender, instance, created, **kwargs):
+    if created == True:
+        create_uuid(instance)
+
+post_save.connect(code_uuid, sender = Code)
+#creates uuids(hopefully unique? ehhhhhh...)
+def create_uuid(code):
+    code.uuid = uuid.uuid4()#random uuid however the python lib does that
+    code.save() 

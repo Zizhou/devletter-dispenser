@@ -1,0 +1,24 @@
+<html>
+<head>
+<style>
+div.box { background-color:#F7C6EA;float:left;margin:5px;padding:5px;width:700px;margin-left:auto;margin-right:auto; }
+</style>
+<title>
+Code Return
+</title>
+</head>
+
+<body>
+<div class = 'box' >
+You are returning a code for {{game}}.
+<form action = '{% url 'dispenser:auto_return' %}' method = 'POST' name = 'returnform'>
+{% csrf_token %}
+<br>
+<input type = 'hidden' value = {{uuid}} name = 'uuid'>
+<input type = 'submit' value = 'Proceed' name = 'return_code'>
+
+<input type = 'submit' value = 'Nevermind' name = 'keep_code'>
+</form>
+</div>
+</body>
+</html>

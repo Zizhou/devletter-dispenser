@@ -1,4 +1,4 @@
-{% extends 'mybase.html' %}
+{% extends 'dispenser/local_base.html' %}
 {% block head %}
 <style>
 div.box { background-color:#F7C6EA;float:left;margin:5px;padding:5px; }
@@ -29,13 +29,5 @@ div.box { background-color:#F7C6EA;float:left;margin:5px;padding:5px; }
 </div>
 <div style = 'clear:both'></div>
 </form>
-<div class = 'button'><a class = fill href = '{% url 'dispenser:submit' %}'>Submit</a></div>
-<div class = 'button'><a class = fill href = '{% url 'dispenser:retrieve' %}'>Retrieve</a></div>
-<div class = 'button'><a class = fill href = '{% url 'dispenser:batch' %}'>Batch List</a></div>
-<div class = 'button'><a class = fill href = '{% url 'dispenser:find' %}'>Find</a></div>
-<div class = 'button' ><a class = fill href = '{% url 'dispenser:codepocalypse' %}'><font size = '1'><marquee behavior = 'alternate'>CODEPOCALYPSE!</marquee></font></a></div>
-
-
-<div style = 'clear:both'></div>
-
+{{block.super}}
 {% endblock %}

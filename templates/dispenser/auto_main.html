@@ -1,0 +1,20 @@
+{% extends 'dispenser/local_base.html' %}
+{% block head %}
+{{block.super}}
+{% endblock %}
+{% block pagetitle %}
+Automatic Code Dispenser Simulator 2015
+{% endblock %}
+
+
+{% block body %}
+<div class = 'box'>
+<form action = '{% url 'dispenser:auto_donate' %}' method = 'POST' name = donateform>
+{% csrf_token %}
+Click to "donate" (must have e-mail registered)
+<input type = 'submit' value = 'gibe moni plz'> 
+</form>
+</div>
+<div style = 'clear:both'></div>
+{{block.super}}
+{% endblock %}

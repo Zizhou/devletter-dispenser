@@ -12,5 +12,8 @@ urlpatterns = patterns('',
     url(r'^batch/get/(?P<game_id>\d+)/$', views.batch_code, name = 'batch_code'),
     url(r'find/$', views.find, name = 'find'),
     url(r'codepocalypse/$', views.rand, name = 'codepocalypse'),
-
+    url(r'auto/$', views.auto_main, name = 'auto'),
+    url(r'auto/get$', views.auto_get, name = 'auto_get'),
+    url(r'auto/return$', views.auto_return, name = 'auto_return'),
+    url(r'auto/donate/$', views.auto_donate, name = 'auto_donate'),
 )

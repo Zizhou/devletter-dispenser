@@ -3,6 +3,14 @@ from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required, permission_required
 
 from dispenser.models import GameCodeProfile, Code, CodeForm, GameSelectForm, GetCodeForm, GetWinnerForm
+
+import random, mailbot
+
+from auto_code import AutoCode
+
+#TODO
+DONATION_GIVEAWAY_ID = 49
+
 # Create your views here.
 
 #@permission_required('dispenser.can_access')
@@ -224,6 +232,84 @@ def rand(request):
         'game_id' : game_id,
     }
     return render(request, 'dispenser/codepocalypse.html', context)
+
+##Automatic distribution experiment
+#and here I thought I was done...
+
+@permission_required('dispenser.can_access')
+def auto_main(request):
+    context = {}
+    return render(request, 'dispenser/auto_main.html', context)
+
+@permission_required('dispenser.can_access')
+def auto_donate(request):
+    if not request.user.email:
+        return redirect('account/email')
+    if request.method == 'POST':
+
+#TODO
+        game_id = DONATION_GIVEAWAY_ID 
+#TODO
+        donation = 'Thank you for your donation of ' + str(random.randint(2,100)) + ' ' + random.choice(['US Dollars', 'Bahraini Dinars', 'Icelandic Krona', 'Pakistani Rupees', 'Qatari Rial','Tanzanian Shillings','South Korean Won','Colombian Pesos','Estonian Kroon']) 
+        game = AutoCode()
+        print game
+        game.code_select(request.user.email, game_id)
+        print game.code
+        url_get = game.get_url_get()
+        url_return = game.get_url_return()
+        #hahaha, oh wow what is this mess
+        donation_mail = mailbot.pack_donation(donation, request.user.email, game.code.game.game, url_get, url_return)
+        mailbot.send_mail(donation_mail, request.user.email)
+        context = {
+            'donation': donation,
+            'game' : game.code.game.game,
+            'url' : url_get + ' ' + url_return
+        }
+        return render(request, 'dispenser/auto_donate.html', context)
+    else:
+        return redirect('/dispenser/auto')
+
+def auto_get(request):
+    if request.GET.get('code'):
+        
+        code = get_object_or_404(Code, uuid = request.GET.get('code'))
+        previously_claimed = ""
+        if code.uuid_claimed == True:
+            previously_claimed = 'Warning! This code may have been used already!'
+        code.uuid_claimed = True
+        code.save()
+        return HttpResponse(code.code + previously_claimed)
+    else:
+        return HttpResponse('huh?')
+
+def auto_return(request):
+    if request.method == 'POST':
+        code = get_object_or_404(Code, uuid = request.POST.get('uuid'))
+        if code.uuid_claimed:
+            return HttpResponse('Seriously? The only way you\'re reading this is if you did something kinda shady. Why are you trying to break things?')
+ 
+        if 'return_code' in request.POST:
+            code.uuid_reset()
+            return HttpResponse('returned')
+        elif 'keep_code' in request.POST:
+            return HttpResponse('kept') 
+        else:
+            return redirect('/')
+    if request.GET.get('code'):
+        code = get_object_or_404(Code, uuid = request.GET.get('code'))
+        if code.uuid_claimed:
+            return HttpResponse('Cannot return! Code already claimed!')
+        context = {
+            'game': code.game.game,
+            'uuid': request.GET.get('code'),
+        }
+        return render(request, 'dispenser/auto_return.html', context)
+    else:
+        return HttpResponse('huh?')
+    return HttpResponse('auto return placeholder')
+
+
+
 
 
 def _process_code(assigned, code, used, codepocalypse):

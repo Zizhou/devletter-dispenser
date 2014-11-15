@@ -1,0 +1,22 @@
+{% extends 'dispenser/local_base.html' %}
+{% block head %}
+{{block.super}}
+{% endblock %}
+{% block pagetitle %}
+
+{% endblock %}
+
+
+{% block body %}
+<div class = 'box'>
+{{game}} - {{donation}}
+<br>
+{{url}}
+</div>
+<div style = 'clear:both'></div>
+
+
+<div class = 'button'><a class = 'fill' href = '{% url 'dispenser:auto'%}'>Back</a></div>
+<div style = 'clear:both'></div>
+{% endblock %}
+
