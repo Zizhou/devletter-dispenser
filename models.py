@@ -120,7 +120,7 @@ class GetWinnerForm(forms.Form):
         entry = Code.objects.filter(assigned__iexact = person)
         return entry
 
-#magic signals
+##magic signals
 
 #create code profiles when a new game is created
 def game_create(sender, instance, created, **kwargs):
@@ -138,12 +138,14 @@ def count_increment(sender, instance, created, **kwargs):
         gcp.save()
 
 post_save.connect(count_increment, sender = Code)
+
 #creates new uuid for each new code
 def code_uuid(sender, instance, created, **kwargs):
     if created == True:
         create_uuid(instance)
 
 post_save.connect(code_uuid, sender = Code)
+
 #creates uuids(hopefully unique? ehhhhhh...)
 def create_uuid(code):
     code.uuid = uuid.uuid4()#random uuid however the python lib does that

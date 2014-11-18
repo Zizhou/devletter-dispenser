@@ -8,12 +8,13 @@ class AutoCode():
         self.code = Code()
         self.url_get = GLOBAL_URL + 'get?code='
         self.url_return = GLOBAL_URL + 'return?code='
-
+        self.game = ''
     def __unicode__(self):
         return self.code
 
     def code_rand(self, assigned):
         game_profile = GameCodeProfile.objects.exclude(count = 0).order_by('?')[0]
+        self.game = game_profile.game
         self.code = game_profile.get_code()
         self.code.uuid_assign(assigned)
         game_profile.update_count()
@@ -21,6 +22,9 @@ class AutoCode():
 
     def code_select(self, assigned, game_id):
         game_profile = GameCodeProfile.objects.get(id = game_id)
+        self.game = game_profile.game
+        if game_profile.count == 0:
+            return False
         self.code = game_profile.get_code()
         self.code.uuid_assign(assigned)
         game_profile.update_count()

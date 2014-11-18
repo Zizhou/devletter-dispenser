@@ -4,12 +4,15 @@ from django.contrib.auth.decorators import login_required, permission_required
 
 from dispenser.models import GameCodeProfile, Code, CodeForm, GameSelectForm, GetCodeForm, GetWinnerForm
 
+#so much for loose coupling...
+from display.models import UserProfile
+
 import random, mailbot
 
 from auto_code import AutoCode
 
 #TODO
-DONATION_GIVEAWAY_ID = 462 
+DONATION_GIVEAWAY_ID = 49 
 
 # Create your views here.
 
@@ -241,6 +244,7 @@ def auto_main(request):
     context = {}
     return render(request, 'dispenser/auto_main.html', context)
 
+#donation simulator
 @permission_required('dispenser.can_access')
 def auto_donate(request):
     if not request.user.email:
@@ -250,20 +254,27 @@ def auto_donate(request):
 #TODO
         game_id = DONATION_GIVEAWAY_ID 
 #TODO
-        donation = 'Thank you for your donation of ' + str(random.randint(2,100)) + ' ' + random.choice(['US Dollars', 'Bahraini Dinars', 'Icelandic Krona', 'Pakistani Rupees', 'Qatari Rial','Tanzanian Shillings','South Korean Won','Colombian Pesos','Estonian Kroon']) 
+        donation = 'Thank you for your donation of ' + str(random.randint(2,100)) + ' ' + random.choice(['US Dollars', 'Bahraini Dinars', 'Icelandic Krona', 'Pakistani Rupees', 'Qatari Rial','Tanzanian Shillings','South Korean Won','Colombian Pesos','Estonian Kroon']) +'.'
         game = AutoCode()
         print game
-        game.code_select(request.user.email, game_id)
-        print game.code
-        url_get = game.get_url_get()
-        url_return = game.get_url_return()
+        attach_code = game.code_select(request.user.email, game_id)
+        if attach_code:
+            url_get = game.get_url_get()
+            url_return = game.get_url_return()
         #hahaha, oh wow what is this mess
-        donation_mail = mailbot.pack_donation(donation, request.user.email, game.code.game.game, url_get, url_return)
+            message = donation + '<br>' + 'Here is a code for ' + str(game.game) +'.<br> To redeem it, go to '+url_get+'<br>If you would like to return it to us, go to '+url_return
+        else:
+            message = donation + '<br>Unfortunately, we are out of codes for '+str(game.game) + '.' 
+        print message
+        donation_mail = mailbot.pack_MIME(message, request.user.email)
         mailbot.send_mail(donation_mail, request.user.email)
+        
+        update_ticket = UserProfile.objects.get(user = request.user)
+        update_ticket.ticket_increment(1)
         context = {
             'donation': donation,
-            'game' : game.code.game.game,
-            'url' : url_get + ' ' + url_return
+            'game' : game.game,
+            
         }
         return render(request, 'dispenser/auto_donate.html', context)
     else:
@@ -275,7 +286,7 @@ def auto_get(request):
         code = get_object_or_404(Code, uuid = request.GET.get('code'))
         previously_claimed = ""
         if code.uuid_claimed == True:
-            previously_claimed = 'Warning! This code may have been used already!'
+            previously_claimed = ' Warning! This code may have been used already!'
         code.uuid_claimed = True
         code.save()
         return HttpResponse(code.code + previously_claimed)
@@ -286,7 +297,7 @@ def auto_return(request):
     if request.method == 'POST':
         code = get_object_or_404(Code, uuid = request.POST.get('uuid'))
         if code.uuid_claimed:
-            return HttpResponse('Seriously? The only way you\'re reading this is if you did something kinda shady. Why are you trying to break things?')
+            return HttpResponse('The only way you\'re reading this is if you did something kinda shady. Why are you trying to break things?')
  
         if 'return_code' in request.POST:
             code.uuid_reset()
@@ -310,8 +321,7 @@ def auto_return(request):
     return HttpResponse('auto return placeholder')
 
 
-
-
+##helper functions
 
 def _process_code(assigned, code, used, codepocalypse):
     code = Code.objects.get(code = code)
@@ -319,7 +329,6 @@ def _process_code(assigned, code, used, codepocalypse):
     code.codepocalypse = codepocalypse
     code.used = used
     code.save()
-
 
 def get_notes(request, game_id):
     try:
