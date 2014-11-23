@@ -16,5 +16,17 @@ Click to "donate" (must have e-mail registered)
 </form>
 </div>
 <div style = 'clear:both'></div>
+<div class = 'box'>
+<form action = '{% url 'dispenser:auto_ticket' %}' method = POST name = ticket_form>
+{%csrf_token%}
+You have {{ticket_count}} ticket{% if ticket_count >= 2 or ticket_count == 0 %}s{%endif%}.<br>
+
+{{ticket_form}}<br>
+
+<input type = 'submit' value = 'I want this game!(2 tickets)' name = ticket_selection>
+<input type = 'submit' value = 'Gimme something random!(1 ticket)' name = ticket_random>
+</form>
+</div>
+<div style = 'clear:both'></div>
 {{block.super}}
 {% endblock %}

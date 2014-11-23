@@ -241,23 +241,31 @@ def rand(request):
 
 @permission_required('dispenser.can_access')
 def auto_main(request):
-    context = {}
+    profile = UserProfile.objects.get(user = request.user)
+    context = {
+        'ticket_form' : GameSelectForm(),
+        'ticket_count': profile.ticket_count,
+
+    }
     return render(request, 'dispenser/auto_main.html', context)
 
 #donation simulator
 @permission_required('dispenser.can_access')
 def auto_donate(request):
+    #you thought you were going to break things by not having an e-mail? ha!
     if not request.user.email:
         return redirect('account/email')
     if request.method == 'POST':
 
-#TODO
+#TODO: game selection not necessarily hardcoded
         game_id = DONATION_GIVEAWAY_ID 
-#TODO
+#TODO: donation message based on real donation info
+#I don't actually have systems for that. This isn't a real marathon site!
         donation = 'Thank you for your donation of ' + str(random.randint(2,100)) + ' ' + random.choice(['US Dollars', 'Bahraini Dinars', 'Icelandic Krona', 'Pakistani Rupees', 'Qatari Rial','Tanzanian Shillings','South Korean Won','Colombian Pesos','Estonian Kroon']) +'.'
         game = AutoCode()
         print game
         attach_code = game.code_select(request.user.email, game_id)
+        subject = 'Thank you for "donating"'
         if attach_code:
             url_get = game.get_url_get()
             url_return = game.get_url_return()
@@ -266,7 +274,7 @@ def auto_donate(request):
         else:
             message = donation + '<br>Unfortunately, we are out of codes for '+str(game.game) + '.' 
         print message
-        donation_mail = mailbot.pack_MIME(message, request.user.email)
+        donation_mail = mailbot.pack_MIME(message, request.user.email, subject)
         mailbot.send_mail(donation_mail, request.user.email)
         
         update_ticket = UserProfile.objects.get(user = request.user)
@@ -280,6 +288,54 @@ def auto_donate(request):
     else:
         return redirect('/dispenser/auto')
 
+def auto_ticket(request):
+    #you thought you were going to break things by not having an e-mail? ha!
+    if not request.user.email:
+        return redirect('account/email')
+    if request.method == 'POST':
+        game = AutoCode()
+        #!!!
+        #let's talk about security sometime...(...later)(...never)
+        up = UserProfile.objects.get(user = request.user)
+        if 'ticket_random' in request.POST:
+            if up.ticket_decrement(1):
+                if not game.code_rand(request.user.email):
+                    up.ticket_increment(1)
+                    return HttpResponse('Oops<br>You have been refunded.')
+            else:
+                return HttpResponse('not enough tickets: '+str(up.ticket_count))
+        elif 'ticket_selection' in request.POST:
+            gsf = GameSelectForm(request.POST)
+            if gsf.is_valid():
+                if up.ticket_decrement(2):
+                    if not game.code_select(request.user.email, gsf.cleaned_data['gameselect'].id):
+                        up.ticket_increment(2)
+                        return HttpResponse('Oops<br>You have been refunded.')
+                else:
+                    return HttpResponse('not enough tickets: '+str(up.ticket_count))
+            else:
+                return HttpResponse('invalid choice')
+            
+#TODO
+        print game
+        print str(game.code)
+        attach_code = game
+        subject = 'Here is your requested code!'
+        if attach_code:
+            url_get = game.get_url_get()
+            url_return = game.get_url_return()
+        #hahaha, oh wow what is this mess
+            message = '<br>' + 'Here is a code for ' + str(game.game) +'.<br> To redeem it, go to '+url_get+'<br>If you would like to return it to us, go to '+url_return
+        else:
+            message = '<br>Unfortunately, we are out of codes for '+str(game.game) + '.' 
+        print message
+        donation_mail = mailbot.pack_MIME(message, request.user.email, subject)
+        mailbot.send_mail(donation_mail, request.user.email)
+        
+   
+        diagnostic = str(game.game.id)
+        return HttpResponse('Check your email for your gift of '+str(game.game)+ '<br>'+diagnostic)
+    return HttpResponse('huh?')
 def auto_get(request):
     if request.GET.get('code'):
         
@@ -289,7 +345,7 @@ def auto_get(request):
             previously_claimed = ' Warning! This code may have been used already!'
         code.uuid_claimed = True
         code.save()
-        return HttpResponse(code.code + previously_claimed)
+        return HttpResponse(code.game.notes + '<br>Code: '+ code.code +'<br>'+ previously_claimed)
     else:
         return HttpResponse('huh?')
 

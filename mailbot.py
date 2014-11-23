@@ -13,9 +13,9 @@ from django.conf import settings
 
 import sys
 
-def pack_MIME(message, send_to):
+def pack_MIME(message, send_to, subject):
     mail = MIMEMultipart('alternative')
-    mail['Subject'] = 'Thank you for "donating"'
+    mail['Subject'] = subject 
     mail['From'] = settings.ROBOT_MAILER 
     mail['To'] = send_to
     body = MIMEText(message, 'html', 'UTF-8')

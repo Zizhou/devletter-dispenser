@@ -1,5 +1,7 @@
 Easily enter and dispense codes
 
+Current version interacts with devletter-display app for keeping track of "tickets" on a user's profile for the self-service automatic dispenser.
+
 Might add:
 -option to create code "bundles" (batch retrieval)
 -track which users get which which codes(probably not, requires that *other* DB)
