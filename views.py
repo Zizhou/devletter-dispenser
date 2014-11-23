@@ -11,8 +11,10 @@ import random, mailbot
 
 from auto_code import AutoCode
 
+from dispenser.SETTINGS import donation_id 
+
 #TODO
-DONATION_GIVEAWAY_ID = 49 
+DONATION_GIVEAWAY_ID = donation_id
 
 # Create your views here.
 

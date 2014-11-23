@@ -1,5 +1,6 @@
 Easily enter and dispense codes
 
+
 Current version interacts with devletter-display app for keeping track of "tickets" on a user's profile for the self-service automatic dispenser.
 
 Might add:
@@ -7,6 +8,10 @@ Might add:
 -track which users get which which codes(probably not, requires that *other* DB)
 
 
+
+
+Setup notes:
+remember to add SETTINGS.py file with donation_id = number because I am bad at programming
 
 
 
