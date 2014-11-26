@@ -70,6 +70,7 @@ class Code(models.Model):
         permissions = (
             ('can_access', 'Can access codes'),
         )
+        ordering = ['game']
 
     
 class CodeForm(forms.Form):

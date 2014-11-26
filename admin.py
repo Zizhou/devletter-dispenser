@@ -8,7 +8,8 @@ class GameCodeProfileAdmin(admin.ModelAdmin):
     fields = ['game', 'count', 'notes']
 
 class CodeAdmin(admin.ModelAdmin):
-   fields = ['game', 'code', 'used', 'assigned', 'codepocalypse', 'uuid', 'uuid_assigned', 'uuid_claimed']
+    fields = ['game', 'code', 'used', 'assigned', 'codepocalypse', 'uuid', 'uuid_assigned', 'uuid_claimed']
+    list_filter = ('uuid_assigned',)
 
 admin.site.register(GameCodeProfile, GameCodeProfileAdmin)
 admin.site.register(Code, CodeAdmin)
