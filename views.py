@@ -2,7 +2,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required, permission_required
 
-from dispenser.models import GameCodeProfile, Code, CodeForm, GameSelectForm, GetCodeForm, GetWinnerForm
+from dispenser.models import GameCodeProfile, Code, CodeForm, GameSelectForm, GetCodeForm, GetWinnerForm, Settings
 
 #so much for loose coupling...
 from display.models import UserProfile
@@ -11,10 +11,8 @@ import random, mailbot
 
 from auto_code import AutoCode
 
-from dispenser.SETTINGS import donation_id 
-
 #TODO
-DONATION_GIVEAWAY_ID = donation_id
+DONATION_GIVEAWAY_ID = Settings.objects.all()[0].donation_id
 
 # Create your views here.
 
@@ -281,6 +279,8 @@ def auto_donate(request):
         
         update_ticket = UserProfile.objects.get(user = request.user)
         update_ticket.ticket_increment(1)
+        if update_ticket.donation_update():
+            print 'yes'
         context = {
             'donation': donation,
             'game' : game.game,
@@ -302,7 +302,8 @@ def auto_ticket(request):
         if 'ticket_random' in request.POST:
             if up.ticket_decrement(1):
                 if not game.code_rand(request.user.email):
-                    up.ticket_increment(1)
+#this wouldn't be necessary if I didn't do these 'function evaluates t/f' things
+                    up.ticket_increment(1) 
                     return HttpResponse('Oops<br>You have been refunded.')
             else:
                 return HttpResponse('not enough tickets: '+str(up.ticket_count))

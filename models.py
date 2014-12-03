@@ -7,6 +7,11 @@ from submit.models import Game
 import uuid
 # Create your models here.
 
+#somehow, I don't think this is how models should be used
+class Settings(models.Model):
+    global_url = models.CharField(max_length = 200, blank = True)
+    donation_id = models.IntegerField(default = 0)
+
 class GameCodeProfile(models.Model):
     game = models.ForeignKey(Game)
     count = models.IntegerField(default = 0)
@@ -46,7 +51,7 @@ class Code(models.Model):
 
     def __unicode__(self):
         return unicode(self.game.game) + self.code + unicode(self.assigned)
-
+    #recipient should be email address, else Bad Things happen
     def uuid_assign(self, recipient):
         if self.uuid_claimed or self.uuid_assigned:
             return False
@@ -70,6 +75,7 @@ class Code(models.Model):
         permissions = (
             ('can_access', 'Can access codes'),
         )
+        #gah
         ordering = ['game__game__name']
 
     

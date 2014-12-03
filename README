@@ -11,7 +11,7 @@ Might add:
 
 
 Setup notes:
-remember to add SETTINGS.py file with donation_id = number because I am bad at programming
+remember to create one(1) Settings object with global_url and donation_id because I am bad at programming
 
 
 
