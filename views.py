@@ -4,7 +4,7 @@ from django.contrib.auth.decorators import login_required, permission_required
 
 from dispenser.models import GameCodeProfile, Code, CodeForm, GameSelectForm, GetCodeForm, GetWinnerForm, Settings
 
-#so much for loose coupling...
+#so much for loose coupling...(not that any of the devletter modules are)
 from display.models import UserProfile
 
 import random, mailbot

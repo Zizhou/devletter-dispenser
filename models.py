@@ -4,7 +4,7 @@ from django import forms
 
 from submit.models import Game
 
-import uuid
+import uuid, datetime
 # Create your models here.
 
 #somehow, I don't think this is how models should be used
@@ -48,7 +48,7 @@ class Code(models.Model):
     uuid = models.CharField(max_length = 200, unique = True, blank = True, null = True)
     uuid_assigned = models.BooleanField(default = False, blank = True)
     uuid_claimed = models.BooleanField(default = False, blank = True)
-
+    uuid_expired = models.DateTimeField(default = datetime.datetime(2038, 1,1,0,0,0, 0, None),blank = True)
     def __unicode__(self):
         return unicode(self.game.game) + self.code + unicode(self.assigned)
     #recipient should be email address, else Bad Things happen
@@ -58,7 +58,9 @@ class Code(models.Model):
         self.used = True
         self.assigned = recipient
         self.uuid_assigned = True
+        self.uuid_expired = datetime.datetime.utcnow() + datetime.timedelta(7)
         self.save()
+        print 'resetting ' + str(self.game)
         return True
 
     def uuid_reset(self):
@@ -67,6 +69,7 @@ class Code(models.Model):
         self.uuid_assigned = False
         self.assigned = ''
         self.used = False
+        self.uuid_expired = datetime.datetime(2038, 1,1,0,0,0,0,None)
         create_uuid(self)
         self.save()
         return True
