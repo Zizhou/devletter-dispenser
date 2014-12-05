@@ -270,7 +270,7 @@ def auto_donate(request):
             url_get = game.get_url_get()
             url_return = game.get_url_return()
         #hahaha, oh wow what is this mess
-            message = donation + '<br>' + 'Here is a code for ' + str(game.game) +'.<br> To redeem it, go to '+url_get+'<br>If you would like to return it to us, go to '+url_return
+            message = donation + '<br>' + 'Here is a code for ' + str(game.game) +'.<br> To redeem it, go to '+url_get+'<br>If you would like to return it to us, go to '+url_return + '<br>This link will expire in 7 days, so don\'t forget to redeem it!'
         else:
             message = donation + '<br>Unfortunately, we are out of codes for '+str(game.game) + '.' 
         print message
