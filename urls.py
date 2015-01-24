@@ -17,4 +17,5 @@ urlpatterns = patterns('',
     url(r'auto/return$', views.auto_return, name = 'auto_return'),
     url(r'auto/donate/$', views.auto_donate, name = 'auto_donate'),
     url(r'auto/ticket/$', views.auto_ticket, name = 'auto_ticket'),
+    url(r'raffle/$', views.raffle, name = 'raffle'),
 )

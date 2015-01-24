@@ -81,6 +81,18 @@ class Code(models.Model):
         #gah
         ordering = ['game__game__name']
 
+class AutoRaffle(models.Model):
+    contest_id = models.CharField(max_length = 200, unique = True, blank = True, null = True)
+    
+
+class RaffleMail(models.Model):
+    mail = models.EmailField(max_length = 254, unique = False)
+    
+    class Meta:
+        ordering = ['mail']
+
+##Forms
+#I should really just split these into seperate files
     
 class CodeForm(forms.Form):
     gameselect = forms.ModelChoiceField(queryset = GameCodeProfile.objects.all().order_by('game__name'), label = 'Select a game to add codes to:')
@@ -124,12 +136,18 @@ class GetCodeForm(forms.Form):
 
 class GetWinnerForm(forms.Form):
     winner = forms.CharField(max_length = 500, label = 'Search for code recepient:')
-    
+
     def get_winner(self):
         person = self.cleaned_data['winner']
+        #"filter" is totally not going to cause problems in the future. nope.
         entry = Code.objects.filter(assigned__iexact = person)
         return entry
 
+class EnterRaffle(forms.Form):
+    mail = forms.EmailField(label = 'Shady E-Mail Form For Fantabulous Prizes:')
+    
+class StartRaffle(forms.Form):
+    
 ##magic signals
 
 #create code profiles when a new game is created

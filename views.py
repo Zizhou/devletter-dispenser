@@ -345,7 +345,7 @@ def auto_get(request):
         code = get_object_or_404(Code, uuid = request.GET.get('code'))
         previously_claimed = ""
         if code.uuid_claimed == True:
-            previously_claimed = ' Warning! This code may have been used already!'
+            previously_claimed = 'Warning! This code may have been used already!'
         code.uuid_claimed = True
         code.save()
         return HttpResponse(code.game.notes + '<br>Code: '+ code.code +'<br>'+ previously_claimed)
@@ -367,6 +367,7 @@ def auto_return(request):
         else:
             return redirect('/')
     if request.GET.get('code'):
+        #fetch by uuid (cunningly named "code" in request because I am a bad)
         code = get_object_or_404(Code, uuid = request.GET.get('code'))
         if code.uuid_claimed:
             return HttpResponse('Cannot return! Code already claimed!')
@@ -379,6 +380,9 @@ def auto_return(request):
         return HttpResponse('huh?')
     return HttpResponse('auto return placeholder')
 
+def raffle(request):
+
+    return HttpResponse('public raffle placeholder')
 
 ##helper functions
 
