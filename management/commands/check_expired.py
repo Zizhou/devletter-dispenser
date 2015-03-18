@@ -17,7 +17,7 @@ class Command(BaseCommand):
         for code in queryset:
             if code.uuid_expired.replace(tzinfo = None) > datetime.datetime.utcnow() and code.uuid_expired.replace(tzinfo = None)- datetime.timedelta(1) < datetime.datetime.utcnow():
                 print 'warning issued for ' + str(code)
-                message = 'Your code for ' + str(code.game.game) + ' is expiring in one day.<br> Go to ' + my_settings.global_url + '?code='+code.uuid +' to redeem it.'
+                message = 'Your code for ' + str(code.game.game) + ' is expiring in one day.<br> Go to ' + my_settings.global_url + 'get?code='+code.uuid +' to redeem it.'
                 mailbot.send_mail(mailbot.pack_MIME(message, code.assigned, 'Your code is expiring'), code.assigned)
 
             if code.uuid_expired.replace(tzinfo = None) < datetime.datetime.utcnow():
