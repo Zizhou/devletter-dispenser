@@ -1,7 +1,11 @@
 Easily enter and dispense codes
 
 
-Current version interacts with devletter-display app for keeping track of "tickets" on a user's profile for the self-service automatic dispenser.
+Current version interacts with devletter-display app for keeping track of 
+"tickets" on a user's profile for the self-service automatic dispenser.
+
+Has one(1) management command for checking expired code urls. (Mostly for cron
+automation because I'm lazy)
 
 Might add:
 -option to create code "bundles" (batch retrieval)
@@ -11,7 +15,8 @@ Might add:
 
 
 Setup notes:
-remember to create one(1) Settings object with global_url and donation_id because I am bad at programming
+remember to create one(1) Settings object with global_url and donation_id 
+because I am bad at programming by running setup.py
 
 
 
