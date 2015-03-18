@@ -147,7 +147,7 @@ class EnterRaffle(forms.Form):
     mail = forms.EmailField(label = 'Shady E-Mail Form For Fantabulous Prizes:')
     
 class StartRaffle(forms.Form):
-    mail = 0    
+    
 ##magic signals
 
 #create code profiles when a new game is created
