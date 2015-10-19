@@ -1,0 +1,13 @@
+<div>
+<form action = '{% url 'dispenser:bulk'%}' method = 'POST'>
+{% csrf_token %}
+{{form}}
+<input type = 'submit' value = 'Mass Export'>
+</form>
+</div>
+<h1>{{game}}</h1>
+<div>
+{% for x in exported %} 
+{{x}} <br>
+{% endfor %}
+</div>

@@ -18,4 +18,5 @@ urlpatterns = patterns('',
     url(r'auto/donate/$', views.auto_donate, name = 'auto_donate'),
     url(r'auto/ticket/$', views.auto_ticket, name = 'auto_ticket'),
     url(r'raffle/$', views.raffle, name = 'raffle'),
+    url(r'bulk_export/$', views.bulk_export, name = 'bulk'),
 )

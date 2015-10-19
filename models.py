@@ -33,7 +33,9 @@ class GameCodeProfile(models.Model):
     def get_all_codes(self):
         all_code = Code.objects.filter(game = self.id)
         return all_code
-         
+
+    def get_unused_codes(self):
+        return Code.objects.filter(game = self.id, used = False)
 
 
 class Code(models.Model):
