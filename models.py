@@ -97,6 +97,7 @@ class RaffleMail(models.Model):
 class CodeForm(forms.Form):
     gameselect = forms.ModelChoiceField(queryset = GameCodeProfile.objects.all().order_by('game__name'), label = 'Select a game to add codes to:')
     codeblock = forms.CharField(widget = forms.Textarea, label = 'Enter code(s):')
+    assigned = forms.BooleanField(label = 'No-email:')
     #js will pull out current notes, if any
     notes = forms.CharField(required = False, widget = forms.Textarea,  label = 'Notes regarding codes:')#, attrs={'id':'code_notes',}
     #splits block of codes by newline
@@ -112,11 +113,12 @@ class CodeForm(forms.Form):
     def code_save(self):
         game = self.cleaned_data['gameselect']
         game.notes = self.cleaned_data['notes']
+        assigned = self.cleaned_data['assigned']
         game.save()
         invalid = []
         for code in self.code_split():
             try:
-                c = Code(game = game, code = code)
+                c = Code(game = game, code = code, assigned = assigned)
                 c.save()
             except:
                 invalid.append(code)
