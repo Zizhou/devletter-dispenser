@@ -236,6 +236,34 @@ def rand(request):
     }
     return render(request, 'dispenser/codepocalypse.html', context)
 
+def bulk_export(request):
+    if request.method == 'POST':
+        form = GameSelectForm(request.POST)
+        if form.is_valid():
+            game = form.cleaned_data['gameselect']
+            exported = []
+            for x in game.code_set.filter(used = False):
+                exported.append(x.code)
+                x.uuid_assign('codenarok-' + unicode(x.game))
+            game.update_count()
+            context = {
+                'form' : form,
+                'game' : game,
+                'exported' : exported,
+            }
+
+            return render(request, 'dispenser/export.html', context)
+
+    form = GameSelectForm()
+    
+    context = {
+        'form' : form,
+    }
+
+
+    return render(request, 'dispenser/export.html', context)
+
+
 ##Automatic distribution experiment
 #and here I thought I was done...
 
@@ -383,6 +411,9 @@ def auto_return(request):
 def raffle(request):
 
     return HttpResponse('public raffle placeholder')
+
+def export(request, game_id):
+    return HttpResponse('nope') 
 
 ##helper functions
 
